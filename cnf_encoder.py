@@ -4,9 +4,9 @@ def encode(filename):
 	with open(filename, "r") as f_in:
 		width, height = map(int, f_in.readline.strip().split(","))
 		unknown_count = (width*height)**2
-		clause_count = width*height + ((width*height)*(width*height - 1))/2 + (width*height)*8*(width*height-1)
+		clause_count = width*height + (((width*height)*(width*height - 1))/2)*(width*height) + (width*height)*8*(width*height-1)
 		# width*height = atleast one is true clauses
-		# ((width*height)*(width*height - 1))/2 = at most one is true clauses
+		# (((width*height)*(width*height - 1))/2)*(width*height) = at most one is true clauses
 		# (width*height)*8*(width*height-1) direction clauses
 		input_values = [][]
 		for line in f_in:
