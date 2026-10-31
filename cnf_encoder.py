@@ -1,4 +1,8 @@
 import sys
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--input_file", default=None, type=str, help="File with hidato instance")
 
 def encode(filename):
 	FIRST_LINE_LENGTH = 100
@@ -6,7 +10,7 @@ def encode(filename):
 		width, height = map(int, f_in.readline.strip().split(","))
 		unknown_count = (width*height)**2
 		clause_count = 0
-		input_values = [][]
+		input_values = [[]]
 		for line in f_in:
 			i, j, value = map(int, line.strip.split(","))
 			input_values[i][j] = value
@@ -82,4 +86,5 @@ def get_index(column, row, number, width, heigt):
 
 
 if __name__ == "__main":
-	encode()
+	args = parser.parse_args([] if "__file__" not in globals() else None)
+	encode(args.file_name)
