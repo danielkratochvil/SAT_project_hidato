@@ -25,7 +25,7 @@ def encode_atleast_one(width, height, f_out):
 	for i in range(width):
 		for j in range(height):
 			for k in range(width*height):
-				var = i*(width*height) + j*height + k + 1
+				var = get_index(i, j, k, width, height)
 				f_out.write(f"{var} ")
 			f_out.write("0\n")
 
@@ -34,18 +34,30 @@ def encode_atmost_one(width, height, f_out):
 	for i in range(width):
 		for j in range(height):
 			for k in range(width*height):
-				it = i*(width*height) + j*height + k + 1
+				it = get_index(i, j, k, width, height)
 				for l in range(it + 1, width*height - it):
 					f_out.write(f"{-it} {-l} 0\n")
 
 
 def encode_directions(width, height, f_out):
+	directions = [(1,0), (0,1), (1,1), (-1,0), (0,-1), (-1,-1), (1,-1), (-1,1)]
 	for i in range(width):
 		for j in range(height):
 			for k in range(width*height):
+				current = get_index(i, j, k, width, height)
+				f_out.write(f"{-current} ")
+				for direction in directions:
+					if(i + direction[0] >= 0 and j + direction[1] >= 0):
+						index = get_index(i + direction[0], j + direction[1], k + 1, width, height)
+						f_out.write(f"{index} ")
+				f_out.write("0")
 
 
 def encode_input_values(width, height, f_out, input_values):
+	return
+
+def get_index(column, row, number, width, heigt):
+	return (column*(width*heigt) + row*heigt + number + 1)
 
 
 if __name__ == "__main":
