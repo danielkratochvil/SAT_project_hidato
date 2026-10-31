@@ -50,11 +50,19 @@ def encode_directions(width, height, f_out):
 					if(i + direction[0] >= 0 and j + direction[1] >= 0):
 						index = get_index(i + direction[0], j + direction[1], k + 1, width, height)
 						f_out.write(f"{index} ")
-				f_out.write("0")
+				f_out.write("0\n")
 
 
 def encode_input_values(width, height, f_out, input_values):
-	return
+	for value in input_values:
+		if (value[2] > 0):
+			index = get_index(value[0], value[1], value[2])
+			f_out.write(f"{index} 0\n")
+		else:
+			for i in range(width*height):
+				index = get_index(value[0], value[1], i)
+				f_out.write(f"{-index} 0\n")
+			
 
 def get_index(column, row, number, width, heigt):
 	return (column*(width*heigt) + row*heigt + number + 1)
