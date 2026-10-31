@@ -7,14 +7,13 @@ parser.add_argument("--input_file", default=None, type=str, help="File with hida
 def encode(filename):
 	FIRST_LINE_LENGTH = 100
 	with open(filename, "r") as f_in:
-		width, height = map(int, f_in.readline.strip().split(","))
+		width, height = map(int, f_in.readline().strip().split(","))
 		unknown_count = (width*height)**2
 		clause_count = 0
-		input_values = [[]]
+		input_values = [[0] * width for _ in range(height)]
 		for line in f_in:
-			i, j, value = map(int, line.strip.split(","))
+			i, j, value = map(int, line.strip().split(","))
 			input_values[i][j] = value
-			clause_count += 1
 	with open("cnf.txt", "w") as f_out:
 		f_out.write(" " * FIRST_LINE_LENGTH + "\n")
 		clause_count += encode_atleast_one(width, height, f_out)
@@ -75,7 +74,7 @@ def encode_input_values(width, height, f_out, input_values):
 			clause_count += 1
 		else:
 			for i in range(width*height):
-				index = get_index(value[0], value[1], i)
+				index = get_index(value[0], value[1], i, width, height)
 				f_out.write(f"{-index} 0\n")
 				clause_count += 1
 	return clause_count
@@ -85,6 +84,6 @@ def get_index(column, row, number, width, heigt):
 	return (column*(width*heigt) + row*heigt + number + 1)
 
 
-if __name__ == "__main":
+if __name__ == "__main__":
 	args = parser.parse_args([] if "__file__" not in globals() else None)
-	encode(args.file_name)
+	encode(args.input_file)
