@@ -8,7 +8,6 @@ def encode(filename):
 	FIRST_LINE_LENGTH = 100
 	with open(filename, "r") as f_in:
 		width, height = map(int, f_in.readline().strip().split(","))
-		print(get_index(width - 1, height - 1, width*height - 1, width, height))
 		unknown_count = (width*height)**2
 		clause_count = 0
 		input_values = [[0] * width for _ in range(height)]
@@ -58,7 +57,7 @@ def encode_directions(width, height, f_out):
 				current = get_index(i, j, k, width, height)
 				f_out.write(f"{-current} ")
 				for direction in directions:
-					if(i + direction[0] >= 0 and j + direction[1] >= 0):
+					if(i + direction[0] >= 0 and j + direction[1] >= 0 and i + direction[0] < width and j + direction[1] < height):
 						index = get_index(i + direction[0], j + direction[1], k + 1, width, height)
 						f_out.write(f"{index} ")
 				f_out.write("0\n")
