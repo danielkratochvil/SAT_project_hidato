@@ -8,6 +8,7 @@ def encode(filename):
 	FIRST_LINE_LENGTH = 100
 	with open(filename, "r") as f_in:
 		width, height = map(int, f_in.readline().strip().split(","))
+		print(get_index(width - 1, height - 1, width*height - 1, width, height))
 		unknown_count = (width*height)**2
 		clause_count = 0
 		input_values = [[0] * width for _ in range(height)]
@@ -69,7 +70,7 @@ def encode_input_values(width, height, f_out, input_values):
 	clause_count = 0
 	for value in input_values:
 		if (value[2] > 0):
-			index = get_index(value[0], value[1], value[2])
+			index = get_index(value[0], value[1], value[2], width, height)
 			f_out.write(f"{index} 0\n")
 			clause_count += 1
 		else:
@@ -81,7 +82,7 @@ def encode_input_values(width, height, f_out, input_values):
 			
 
 def get_index(column, row, number, width, heigt):
-	return (column*(width*heigt) + row*heigt + number + 1)
+	return (column*(width*heigt**2) + row*(width*heigt) + number + 1)
 
 
 if __name__ == "__main__":
