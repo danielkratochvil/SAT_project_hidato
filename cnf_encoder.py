@@ -1,46 +1,53 @@
 import sys
 
 def encode(filename):
+	FIRST_LINE_LENGTH = 100
 	with open(filename, "r") as f_in:
 		width, height = map(int, f_in.readline.strip().split(","))
 		unknown_count = (width*height)**2
-		clause_count = width*height + (((width*height)*(width*height - 1))/2)*(width*height) + (width*height)*8*(width*height-1)
-		# width*height = atleast one is true clauses
-		# (((width*height)*(width*height - 1))/2)*(width*height) = at most one is true clauses
-		# (width*height)*8*(width*height-1) direction clauses
+		clause_count = 0
 		input_values = [][]
 		for line in f_in:
 			i, j, value = map(int, line.strip.split(","))
 			input_values[i][j] = value
 			clause_count += 1
 	with open("cnf.txt", "w") as f_out:
-		f_out.write(f"p cnf {unknown_count} {clause_count} \n")
-		encode_atleast_one(width, height, f_out)
-		encode_atmost_one(width, height, f_out)
-		encode_directions(width, height, f_out)
-		encode_input_values(width, height, f_out, input_values)
-	return
-
+		f_out.write(" " * FIRST_LINE_LENGTH + "\n")
+		clause_count += encode_atleast_one(width, height, f_out)
+		clause_count += encode_atmost_one(width, height, f_out)
+		clause_count += encode_directions(width, height, f_out)
+		clause_count += encode_input_values(width, height, f_out, input_values)
+		f_out.seek(0)
+		header = f"p cnf {unknown_count} {clause_count}"
+		f_out.write(header.ljust(FIRST_LINE_LENGTH))
+	
 def encode_atleast_one(width, height, f_out):
+	clause_count = 0
 	for i in range(width):
 		for j in range(height):
 			for k in range(width*height):
 				var = get_index(i, j, k, width, height)
 				f_out.write(f"{var} ")
 			f_out.write("0\n")
+			clause_count += 1
+	return clause_count
 
 
 def encode_atmost_one(width, height, f_out):
+	clause_count = 0
 	for i in range(width):
 		for j in range(height):
 			for k in range(width*height):
 				it = get_index(i, j, k, width, height)
 				for l in range(it + 1, width*height - it):
 					f_out.write(f"{-it} {-l} 0\n")
+					clause_count += 1
+	return clause_count
 
 
 def encode_directions(width, height, f_out):
 	directions = [(1,0), (0,1), (1,1), (-1,0), (0,-1), (-1,-1), (1,-1), (-1,1)]
+	clause_count = 0
 	for i in range(width):
 		for j in range(height):
 			for k in range(width*height):
@@ -51,17 +58,23 @@ def encode_directions(width, height, f_out):
 						index = get_index(i + direction[0], j + direction[1], k + 1, width, height)
 						f_out.write(f"{index} ")
 				f_out.write("0\n")
+				clause_count += 1
+	return clause_count
 
 
 def encode_input_values(width, height, f_out, input_values):
+	clause_count = 0
 	for value in input_values:
 		if (value[2] > 0):
 			index = get_index(value[0], value[1], value[2])
 			f_out.write(f"{index} 0\n")
+			clause_count += 1
 		else:
 			for i in range(width*height):
 				index = get_index(value[0], value[1], i)
 				f_out.write(f"{-index} 0\n")
+				clause_count += 1
+	return clause_count
 			
 
 def get_index(column, row, number, width, heigt):
