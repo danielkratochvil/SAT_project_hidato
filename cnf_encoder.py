@@ -36,10 +36,14 @@ def encode_atmost_one(width, height, f_out):
 			for k in range(width*height):
 				it = i*(width*height) + j*height + k + 1
 				for l in range(it + 1, width*height - it):
-					f_out.write(f"{-it} {-l} 0")
+					f_out.write(f"{-it} {-l} 0\n")
 
 
 def encode_directions(width, height, f_out):
+	for i in range(width):
+		for j in range(height):
+			for k in range(width*height):
+
 
 def encode_input_values(width, height, f_out, input_values):
 
