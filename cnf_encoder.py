@@ -57,7 +57,7 @@ def encode_directions(width, height, f_out):
 				current = get_index(i, j, k, width, height)
 				f_out.write(f"{-current} ")
 				for direction in directions:
-					if(i + direction[0] >= 0 and j + direction[1] >= 0 and i + direction[0] < width and j + direction[1] < height):
+					if(i + direction[0] >= 0 and j + direction[1] >= 0 and i + direction[0] < width and j + direction[1] < height and k < width*height - 1):
 						index = get_index(i + direction[0], j + direction[1], k + 1, width, height)
 						f_out.write(f"{index} ")
 				f_out.write("0\n")
