@@ -10,27 +10,29 @@ def encode(filename):
 		row, column = map(int, f_in.readline().strip().split(","))
 		number_count = row*column
 		clause_count = 0
-		input_values = []
+		input_values = [[-1] * column for _ in range(row)]
 		for line in f_in:
 			i, j, value = map(int, line.strip().split(","))
-			input_values.append((i,j,value))
+			input_values[i][j] = value
 			if (value == 0):
 				number_count -= 1
 	with open("cnf.txt", "w") as f_out:
 		f_out.write(" " * FIRST_LINE_LENGTH + "\n")
-		clause_count += encode_atleast_one(row, column, number_count, f_out)
-		clause_count += encode_atmost_one(row, column, number_count, f_out)
-		clause_count += encode_directions(row, column, number_count, f_out)
-		clause_count += encode_input_values(row, column, number_count, f_out, input_values)
+		clause_count += encode_atleast_one(row, column, number_count, input_values, f_out)
+		clause_count += encode_atmost_one(row, column, number_count, input_values, f_out)
+		clause_count += encode_directions(row, column, number_count, input_values, f_out)
+		clause_count += encode_input_values(row, column, number_count, input_values, f_out)
 		f_out.seek(0)
 		unknown_count = (row*column)*number_count
 		header = f"p cnf {unknown_count} {clause_count}"
 		f_out.write(header.ljust(FIRST_LINE_LENGTH))
 	
-def encode_atleast_one(row, column, number_count, f_out):
+def encode_atleast_one(row, column, number_count, input_values, f_out):
 	clause_count = 0
 	for i in range(row):
 		for j in range(column):
+			if(input_values[i][j] == 0):
+				continue
 			for k in range(number_count):
 				var = get_index(i, j, k, column, number_count)
 				f_out.write(f"{var} ")
@@ -39,10 +41,12 @@ def encode_atleast_one(row, column, number_count, f_out):
 	return clause_count
 
 
-def encode_atmost_one(row, column, number_count, f_out):
+def encode_atmost_one(row, column, number_count, input_values, f_out):
 	clause_count = 0
 	for i in range(row):
 		for j in range(column):
+			if(input_values[i][j] == 0):
+				continue
 			for k in range(number_count):
 				it = get_index(i, j, k, column, number_count)
 				l = it
@@ -53,11 +57,13 @@ def encode_atmost_one(row, column, number_count, f_out):
 	return clause_count
 
 
-def encode_directions(row, column, number_count, f_out):
+def encode_directions(row, column, number_count, input_values, f_out):
 	directions = [(1,0), (0,1), (1,1), (-1,0), (0,-1), (-1,-1), (1,-1), (-1,1)]
 	clause_count = 0
 	for i in range(row):
 		for j in range(column):
+			if(input_values[i][j] == 0):
+				continue
 			for k in range(number_count - 1):
 				current = get_index(i, j, k, column, number_count)
 				f_out.write(f"{-current} ")
@@ -70,18 +76,20 @@ def encode_directions(row, column, number_count, f_out):
 	return clause_count
 
 
-def encode_input_values(row, column, number_count, f_out, input_values):
+def encode_input_values(row, column, number_count,  input_values, f_out):
 	clause_count = 0
-	for value in input_values:
-		if (value[2] > 0):
-			index = get_index(value[0], value[1], value[2] - 1 , column, number_count)
-			f_out.write(f"{index} 0\n")
-			clause_count += 1
-		else:
-			for i in range(number_count):
-				index = get_index(value[0], value[1], i, column, number_count)
-				f_out.write(f"{-index} 0\n")
+	for i in range(row):
+		for j in range(column):
+			value = input_values[i][j]
+			if (value > 0):
+				index = get_index(i, j, value - 1, column, number_count)
+				f_out.write(f"{index} 0\n")
 				clause_count += 1
+			elif (value == 0):
+				for k in range(number_count):
+					index = get_index(i, j , k, column, number_count)
+					f_out.write(f"{-index} 0\n")
+					clause_count += 1
 	return clause_count
 			
 
