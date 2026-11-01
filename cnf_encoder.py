@@ -55,7 +55,7 @@ def encode_directions(row, column, f_out):
 	clause_count = 0
 	for i in range(row):
 		for j in range(column):
-			for k in range(row*column):
+			for k in range(row*column - 1):
 				current = get_index(i, j, k, row, column)
 				f_out.write(f"{-current} ")
 				for direction in directions:
