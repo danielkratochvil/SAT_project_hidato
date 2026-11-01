@@ -71,7 +71,7 @@ def encode_input_values(row, column, f_out, input_values):
 	clause_count = 0
 	for value in input_values:
 		if (value[2] > 0):
-			index = get_index(value[0], value[1], value[2], row, column)
+			index = get_index(value[0], value[1], value[2] - 1, row, column)
 			f_out.write(f"{index} 0\n")
 			clause_count += 1
 		else:
