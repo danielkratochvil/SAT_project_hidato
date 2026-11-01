@@ -42,7 +42,9 @@ def encode_atmost_one(width, height, f_out):
 		for j in range(height):
 			for k in range(width*height):
 				it = get_index(i, j, k, width, height)
-				for l in range(it + 1, width*height - it):
+				l = it
+				while (l % (width*height) != 0):
+					l += 1
 					f_out.write(f"{-it} {-l} 0\n")
 					clause_count += 1
 	return clause_count
