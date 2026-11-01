@@ -6,8 +6,9 @@ parser.add_argument("--output_file", default=None, type=str, help="File with hid
 parser.add_argument("--row", default=0, type=int, help="Row count")
 parser.add_argument("--column", default=0, type=int, help="Column count")
 parser.add_argument("--number_count", default=0, type=int, help="Number count")
+parser.add_argument("--prefill_ratio", default=0.2, type=float, help="Part of squeares with predeterminated number")
 
-def generate_hidato(output_file, row, column, number_count):
+def generate_hidato(output_file, row, column, number_count, prefill_ratio):
 	grid = [[-1] * column for _ in range(row)]
 	directions = [(1,0), (0,1), (1,1), (-1,0), (0,-1), (-1,-1), (1,-1), (-1,1)]
 	while True:
@@ -52,7 +53,7 @@ def generate_hidato(output_file, row, column, number_count):
 				if(value == -1):
 					f.write(f"{i},{j},0\n")
 				else:
-					if(random.getrandbits(1) or value == 0 or value == number_count - 1):
+					if(random.random() < prefill_ratio or value == 0 or value == number_count - 1):
 						f.write(f"{i},{j},{value + 1}\n")
 			
 
@@ -60,4 +61,4 @@ def generate_hidato(output_file, row, column, number_count):
 
 if __name__ == "__main__":
 	args = parser.parse_args([] if "__file__" not in globals() else None)
-	generate_hidato(args.output_file, args.row, args.column, args.number_count) 
+	generate_hidato(args.output_file, args.row, args.column, args.number_count, args.prefill_ratio) 
